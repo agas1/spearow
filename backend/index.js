@@ -1,7 +1,7 @@
-const express = require("express"); // cria servidor
-const http = require("http"); // servidor básico do Node
-const { Server } = require("socket.io"); // chat em tempo real
-const cors = require("cors"); // libera acesso pra outros sites
+const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
+const cors = require("cors");
 
 const app = express();
 
@@ -14,13 +14,14 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: allowedOrigins,
-  methods: ["GET", "POST", "PATCH"],
+  methods: ["GET", "POST", "PATCH", "OPTIONS"],
   credentials: true
 }));
 
-app.use(express.json()); // lê JSON vindo do frontend
+app.use(express.json());
 
-const users = []; // "banco"
+// "Banco de dados" em memória
+const users = [];
 
 // criar conta
 app.post("/register", (req, res) => {
@@ -67,31 +68,30 @@ app.patch("/profile", (req, res) => {
   return res.status(404).json({ error: "Usuário não encontrado" });
 });
 
-// rota simples pra testar
 app.get("/", (req, res) => {
   res.send("Backend funcionando");
 });
 
-// CHAAAT
+// CHAT
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: allowedOrigins,
-    methods: ["GET", "POST"]
+    methods: ["GET", "POST", "PATCH", "OPTIONS"]
   }
 });
 
-const onlineUsers = {}; // quem tá on
+const onlineUsers = {};
 
 io.on("connection", (socket) => {
   const userName = socket.handshake.query.userName || "Anônimo";
   onlineUsers[socket.id] = userName;
   console.log(`${userName} conectado`);
 
-  io.emit("user_connected", Object.values(onlineUsers)); // avisa todo mundo
+  io.emit("user_connected", Object.values(onlineUsers));
 
   socket.on("send_message", (data) => {
-    io.emit("receive_message", data); // envia mensagem pra todos
+    io.emit("receive_message", data);
   });
 
   socket.on("disconnect", () => {
@@ -101,7 +101,6 @@ io.on("connection", (socket) => {
   });
 });
 
-// liga servidor
-server.listen(4000, () =>
-  console.log("Servidor rodando na porta 4000 🚀")
-);
+// Usar a porta do Render ou 4000 localmente
+const PORT = process.env.PORT || 4000;
+server.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT} 🚀`));
