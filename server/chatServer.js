@@ -74,6 +74,6 @@ io.on('connection', (socket) => {
     });
 });
 
-server.listen(PORT, () => {
-    console.log(`Servidor de chat Socket.io rodando na porta ${PORT}`);
+server.listen(process.env.PORT || 5000, () => {
+    console.log(`Servidor de chat Socket.io rodando na porta ${process.env.PORT || 5000}`);
 });
