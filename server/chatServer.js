@@ -3,15 +3,15 @@ const http = require('http'); // servidor HTTP nativo do Node
 const { Server } = require('socket.io'); // biblioteca para WebSocket
 const cors = require('cors'); // para controlar quem pode acessar
 
-const app = express(); // criando o app
+const app = express(); 
 const server = http.createServer(app); // criando servidor HTTP usando o express
-const PORT = process.env.PORT || 5000; // porta do servidor, usa env se existir
+const PORT = process.env.PORT || 5000; 
 
-// Lista de domínios permitidos — controla quem pode se conectar ao chat
+// Lista de domínios permitidos, controla quem pode se conectar ao chat
 const allowedOrigins = [
-  "https://spearow-2bi1-git-main-agas1s-projects.vercel.app", // preview branch main
-  "https://spearow-2bi1.vercel.app", // domínio fixo da produção (importante adicionar)
-  "http://localhost:3000" // para testes locais
+  "https://spearow-2bi1-git-main-agas1s-projects.vercel.app", // preview  main
+  "https://spearow-2bi1.vercel.app", // domínio fixo da produção 
+  "http://localhost:3000" //  testes 
 ];
 
 // rota simples só pra verificar se o servidor tá funcionando
@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
 // CORS: define quem pode acessar o backend
 app.use(cors({
   origin: allowedOrigins, // só permite domínios na lista
-  methods: ["GET", "POST"], // métodos HTTP permitidos
+  methods: ["GET", "POST"], // métodos HTTP 
   credentials: true // permite cookies/credenciais
 }));
 
