@@ -7,6 +7,13 @@ const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
 
+// Lista de domínios permitidos
+const allowedOrigins = [
+  "https://spearow-2bi1-git-main-agas1s-projects.vercel.app", // branch main
+  "https://spearow.vercel.app", // domínio fixo da Vercel
+  "http://localhost:3000" // local
+];
+
 // 🔥 ADICIONE ESTA ROTA PARA O RENDER DETECTAR
 app.get('/', (req, res) => {
   res.json({ 
@@ -17,23 +24,15 @@ app.get('/', (req, res) => {
 
 // 🔥 CONFIGURAÇÃO COMPLETA DO CORS
 app.use(cors({
-  origin: [
-    "https://spearow-2bi1-er3tnxcw6-agas1s-projects.vercel.app",
-    "https://spearow.vercel.app",
-    "http://localhost:3000"
-  ],
+  origin: allowedOrigins,
   methods: ["GET", "POST"],
   credentials: true
 }));
 
-// 🔥 ATUALIZE A CONFIGURAÇÃO DO SOCKET.IO
+// 🔥 CONFIGURAÇÃO DO SOCKET.IO
 const io = new Server(server, {
   cors: {
-    origin: [
-      "https://spearow-2bi1-er3tnxcw6-agas1s-projects.vercel.app",
-      "https://spearow.vercel.app", 
-      "http://localhost:3000"
-    ],
+    origin: allowedOrigins,
     methods: ["GET", "POST"],
     credentials: true
   }
@@ -42,7 +41,7 @@ const io = new Server(server, {
 // Lista global de usuários conectados
 let connectedUsers = [];
 
-// --- Lógica do Socket.io (MANTENHA SEU CÓDIGO) ---
+// --- Lógica do Socket.io ---
 io.on('connection', (socket) => {
     const userName = socket.handshake.query.userName || 'Visitante';
     console.log(`Usuário conectado: ${userName} (ID: ${socket.id})`);
@@ -74,6 +73,6 @@ io.on('connection', (socket) => {
     });
 });
 
-server.listen(process.env.PORT || 5000, () => {
-    console.log(`Servidor de chat Socket.io rodando na porta ${process.env.PORT || 5000}`);
+server.listen(PORT, () => {
+    console.log(`Servidor de chat Socket.io rodando na porta ${PORT}`);
 });
