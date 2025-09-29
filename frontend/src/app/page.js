@@ -242,32 +242,40 @@ export default function HomePage() {
     }
   };
 
+  // 👉 FUNÇÃO CORRIGIDA: Usar endpoint /profile da SUA API
   const handleUpdate = async (e) => {
     e.preventDefault();
-    const userId = user?.id;
-    if (!userId) {
-      alert("Erro: ID do usuário não encontrado para atualização.");
+    const userEmail = user?.email;
+    if (!userEmail) {
+      alert("Erro: Email do usuário não encontrado para atualização.");
       return;
     }
 
     try {
-      const updateData = { name: newName };
-      if (newPassword.trim()) updateData.password = newPassword;
+      const updateData = { 
+        email: userEmail,
+        newName: newName 
+      };
+      
+      if (newPassword.trim()) {
+        updateData.newPassword = newPassword;
+      }
 
-      const res = await fetch(`${API_URL}/users/${userId}`, {
+      const res = await fetch(`${API_URL}/profile`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updateData),
       });
 
       if (res.ok) {
+        const data = await res.json();
         alert("Perfil atualizado com sucesso!");
         setIsEditing(false);
-        const updatedUser = await res.json();
-        setUser(updatedUser);
+        setUser(data.user); // ← SUA API retorna { message: "...", user: {...} }
         setNewPassword("");
       } else {
-        alert("Erro ao atualizar o perfil.");
+        const errorData = await res.json();
+        alert(`Erro ao atualizar o perfil: ${errorData.error}`);
       }
     } catch (error) {
       console.error("Erro ao atualizar o perfil:", error);
@@ -277,9 +285,6 @@ export default function HomePage() {
 
   // --- Efeitos ---
   useEffect(() => {
-    // 👉 ADICIONADO: Verificação da API_URL
-    console.log("🔧 API_URL configurada:", API_URL);
-
     const email = localStorage.getItem("userEmail");
     const loggedInStatus = localStorage.getItem("isLoggedIn") === "true";
     setIsLoggedIn(loggedInStatus);
@@ -289,30 +294,21 @@ export default function HomePage() {
         setUserEmail(email);
 
         try {
-          console.log("🔍 Buscando usuário:", email);
-          
-          // 👉 CORREÇÃO: URL correta com encodeURIComponent
+          // 👉 CORREÇÃO: Usar endpoint /users da SUA API
           const userRes = await fetch(`${API_URL}/users?email=${encodeURIComponent(email)}`);
           
-          console.log("📡 Status da resposta:", userRes.status);
-          
           if (!userRes.ok) {
-            const errorText = await userRes.text();
-            console.error("❌ Erro na resposta:", errorText);
-            throw new Error(`Erro ao carregar dados do usuário: ${userRes.status} ${userRes.statusText}`);
+            throw new Error(`Erro ao carregar dados do usuário: ${userRes.status}`);
           }
 
-          const userDataArray = await userRes.json();
-          console.log("✅ Dados recebidos:", userDataArray);
+          // 👉 CORREÇÃO: Sua API retorna objeto direto, não array
+          const userData = await userRes.json();
 
-          const userData = Array.isArray(userDataArray) ? userDataArray[0] : userDataArray;
-
-          if (userData && userData.id) {
-            console.log("👤 Usuário carregado:", userData.name);
+          if (userData && userData.email) {
             setUser(userData);
             setNewName(userData.name);
           } else {
-            console.warn("⚠️ Usuário não encontrado");
+            console.warn("Usuário não encontrado");
             handleLogout();
             return;
           }
@@ -327,11 +323,10 @@ export default function HomePage() {
           await loadInitialPokemons();
 
         } catch (error) {
-          console.error("💥 Erro no carregamento inicial:", error);
+          console.error("Erro no carregamento inicial:", error);
           
-          // 👉 MELHOR TRATAMENTO DE ERRO
           if (error.message.includes('Failed to fetch')) {
-            alert(`❌ Não foi possível conectar ao servidor.\n\nVerifique:\n• Sua conexão com a internet\n• Se o servidor está online\n\nURL: ${API_URL}`);
+            alert(`❌ Não foi possível conectar ao servidor.\n\nVerifique:\n• Se o backend está rodando na porta 4000\n• URL: ${API_URL}`);
           } else {
             alert(`❌ Erro: ${error.message}`);
           }
