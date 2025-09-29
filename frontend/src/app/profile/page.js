@@ -6,21 +6,21 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 1. Obter o email do usuário logado do localStorage
     const userEmail = localStorage.getItem("userEmail");
 
     if (userEmail) {
-      // 2. Fazer a requisição para buscar os dados do usuário no seu backend
       const fetchUserData = async () => {
         try {
-          // Ajuste o endpoint da sua API para buscar o usuário por email
-          const res = await fetch(`http://localhost:4000/users?email=${userEmail}`);
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/users?email=${userEmail}`
+          );
+
           if (!res.ok) {
             throw new Error("Erro ao carregar dados do usuário.");
           }
+
           const data = await res.json();
-          // Supondo que a API retorna um array com um único objeto de usuário
-          setUser(data[0]); 
+          setUser(data); // Backend retorna objeto, não array
         } catch (error) {
           console.error("Erro ao buscar dados do perfil:", error);
         } finally {
@@ -30,8 +30,6 @@ export default function ProfilePage() {
 
       fetchUserData();
     } else {
-      // Se não houver email no localStorage, o usuário não está logado
-      // Redirecione-o ou exiba uma mensagem
       setLoading(false);
     }
   }, []);

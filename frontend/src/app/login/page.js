@@ -1,5 +1,3 @@
-//Autenticação Manual: implementei um login básico consumindo meu backend // Gerenciamento de sessão: uso localStorage para manter o estado de login entre páginas
-
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -15,9 +13,9 @@ export default function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
+
     try {
-      const res = await fetch("http://localhost:4000/login", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -25,13 +23,14 @@ export default function LoginPage() {
 
       if (res.ok) {
         const data = await res.json();
-        
+
         localStorage.setItem("isLoggedIn", "true");
         localStorage.setItem("userEmail", data.user.email);
-        
+
         router.push("/");
       } else {
-        alert("Email ou senha incorretos");
+        const errorData = await res.json();
+        alert(errorData.error || "Email ou senha incorretos");
       }
     } catch (error) {
       console.error("Erro ao fazer login:", error);
@@ -42,38 +41,31 @@ export default function LoginPage() {
   };
 
   return (
-    <div 
+    <div
       className="min-h-screen bg-cover bg-center bg-fixed flex items-center justify-center p-4"
       style={{ backgroundImage: "url('/fundoHome.jpg')" }}
     >
       <div className="w-full max-w-md">
-        {/* Card de Login com estilo similar à home */}
         <div className="relative card-background rounded-2xl p-8 flex flex-col items-center shadow-2xl border-2 border-neonBlue/20 transform hover:scale-[1.02] transition-transform duration-300">
-          
-          {/* Logo Spearow + Pokébola - MESMA DO NAVBAR */}
           <div className="flex flex-col items-center gap-0 mb-8">
-            {/* Logo Spearow acima */}
-            <Image 
-              src="/apearow.png" 
-              alt="Spearow Logo" 
-              width={140} 
+            <Image
+              src="/apearow.png"
+              alt="Spearow Logo"
+              width={140}
               height={50}
               className="object-contain"
             />
-            {/* Pokébola abaixo */}
-            <Image 
-              src="/pokeball.png" 
-              alt="Pokébola" 
-              width={40} 
+            <Image
+              src="/pokeball.png"
+              alt="Pokébola"
+              width={40}
               height={40}
               className="object-contain -mt-3"
             />
-            {/* Texto "Entre na sua conta" */}
             <p className="text-gray-300 text-lg mt-2">Entre na sua conta</p>
           </div>
 
           <form onSubmit={handleLogin} className="w-full space-y-6">
-            {/* Campo Email */}
             <div>
               <label className="block text-gray-300 text-sm font-semibold mb-2">
                 Email
@@ -88,7 +80,6 @@ export default function LoginPage() {
               />
             </div>
 
-            {/* Campo Senha */}
             <div>
               <label className="block text-gray-300 text-sm font-semibold mb-2">
                 Senha
@@ -103,7 +94,6 @@ export default function LoginPage() {
               />
             </div>
 
-            {/* Botão Entrar */}
             <button
               type="submit"
               disabled={loading}
@@ -120,26 +110,21 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Divisor */}
           <div className="w-full flex items-center my-6">
             <div className="flex-1 border-t border-gray-600"></div>
             <span className="px-3 text-gray-400 text-sm">ou</span>
             <div className="flex-1 border-t border-gray-600"></div>
           </div>
 
-          {/* Link para Cadastro */}
           <div className="text-center">
-            <p className="text-gray-300 mb-4">
-              Não tem uma conta?
-            </p>
-            <Link 
+            <p className="text-gray-300 mb-4">Não tem uma conta?</p>
+            <Link
               href="/register"
               className="inline-block py-3 px-6 bg-green-600 hover:bg-green-700 rounded-lg shadow-lg text-white font-semibold transition-all duration-200 transform hover:scale-[1.02] border-2 border-green-500/30"
             >
               Criar Cadastro
             </Link>
           </div>
-
         </div>
       </div>
     </div>
