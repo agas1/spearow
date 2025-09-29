@@ -39,30 +39,23 @@ const getTypeClass = (type) => typeColors[type] || 'bg-gray-700 shadow-gray-700/
 
 // 👉 Componente PokemonGrid ATUALIZADO com mesmo layout do PokemonResults
 function PokemonGrid({ pokemons, isPokemonFavorited, addFavorite }) {
-  // Se não há pokémons, retorna nada (vazio) - MESMA lógica do PokemonResults
   if (!pokemons || pokemons.length === 0) {
     return null;
   }
 
   return (
-    // MESMO grid layout do PokemonResults
     <div className="w-full max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 px-4">
       {pokemons.map((poke) => {
         const favorited = isPokemonFavorited(poke.name);
-        // MESMA lógica para imagem
         const imageUrl = poke.sprites?.other['official-artwork']?.front_default || poke.sprites?.front_default || "/default-pokemon.png";
-        
-        // MESMA lógica para habilidades
         const abilities = poke.abilities?.slice(0, 2).map(a => a.ability.name).join(', ') || 'N/A';
 
         return (
           <div
             key={poke.id}
-            // MESMAS classes do card do PokemonResults
             className="relative card-background rounded-2xl p-4 flex flex-col items-center 
                        transform hover:scale-[1.03] transition-transform duration-300 shadow-2xl border-2 border-neonBlue/20"
           >
-            {/* MESMO botão de favorito */}
             <button
               onClick={() => addFavorite({ name: poke.name, image: imageUrl })}
               className={`absolute top-3 right-3 text-xl transition-transform duration-200 hover:scale-125 z-10 
@@ -73,7 +66,6 @@ function PokemonGrid({ pokemons, isPokemonFavorited, addFavorite }) {
             </button>
             
             <Link href={`/pokemon/${poke.name}`} className="w-full flex flex-col items-center group">
-              {/* MESMA imagem */}
               <div className="relative w-32 h-32 my-2">
                 <img
                   src={imageUrl}
@@ -82,12 +74,10 @@ function PokemonGrid({ pokemons, isPokemonFavorited, addFavorite }) {
                 />
               </div>
 
-              {/* MESMO nome */}
               <h2 className="text-3xl font-bold capitalize text-white mb-3 mt-1 group-hover:text-neonBlue transition-colors">
                 {poke.name}
               </h2>
               
-              {/* MESMOS tipos */}
               <div className="flex space-x-2 justify-center mb-3">
                 {poke.types.map((typeInfo) => (
                   <span
@@ -101,7 +91,6 @@ function PokemonGrid({ pokemons, isPokemonFavorited, addFavorite }) {
                 ))}
               </div>
               
-              {/* MESMAS habilidades */}
               <div className="w-full mt-2 p-2 text-center text-sm rounded-lg bg-black/40 border border-gray-700/50">
                 <span className="font-semibold text-gray-400 block mb-1">Habilidades:</span>
                 <span className="text-gray-200 capitalize">{abilities}</span>
@@ -166,7 +155,7 @@ export default function HomePage() {
   const loadInitialPokemons = async () => {
     try {
       // Pokémon em destaque (clássicos)
-      const featuredIds = [6, 25, 150, 94, 143, 149]; // Charizard, Pikachu, Mewtwo, Gengar, Snorlax, Dragonite
+      const featuredIds = [6, 25, 150, 94, 143, 149];
       const featuredPromises = featuredIds.map(id => 
         fetch(`https://pokeapi.co/api/v2/pokemon/${id}`).then(res => res.json())
       );
@@ -193,7 +182,7 @@ export default function HomePage() {
     if (!type) return;
     setResults([]);
     setLoading(true);
-    setShowAllPokemons(false); // 👉 Esconde lista ao buscar por tipo
+    setShowAllPokemons(false);
 
     try {
       const res = await fetch(`https://pokeapi.co/api/v2/type/${type.toLowerCase()}`);
@@ -221,7 +210,7 @@ export default function HomePage() {
     }
     setLoading(true);
     setSelectedType("");
-    setShowAllPokemons(false); // 👉 Esconde lista ao fazer busca
+    setShowAllPokemons(false);
 
     try {
       const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${query.toLowerCase()}`);
@@ -288,6 +277,9 @@ export default function HomePage() {
 
   // --- Efeitos ---
   useEffect(() => {
+    // 👉 ADICIONADO: Verificação da API_URL
+    console.log("🔧 API_URL configurada:", API_URL);
+
     const email = localStorage.getItem("userEmail");
     const loggedInStatus = localStorage.getItem("isLoggedIn") === "true";
     setIsLoggedIn(loggedInStatus);
@@ -297,20 +289,35 @@ export default function HomePage() {
         setUserEmail(email);
 
         try {
-          const userRes = await fetch(`${API_URL}/users?email=${email}`);
-          if (!userRes.ok) throw new Error("Erro ao carregar dados do usuário.");
+          console.log("🔍 Buscando usuário:", email);
+          
+          // 👉 CORREÇÃO: URL correta com encodeURIComponent
+          const userRes = await fetch(`${API_URL}/users?email=${encodeURIComponent(email)}`);
+          
+          console.log("📡 Status da resposta:", userRes.status);
+          
+          if (!userRes.ok) {
+            const errorText = await userRes.text();
+            console.error("❌ Erro na resposta:", errorText);
+            throw new Error(`Erro ao carregar dados do usuário: ${userRes.status} ${userRes.statusText}`);
+          }
 
           const userDataArray = await userRes.json();
+          console.log("✅ Dados recebidos:", userDataArray);
+
           const userData = Array.isArray(userDataArray) ? userDataArray[0] : userDataArray;
 
-          if (userData) {
+          if (userData && userData.id) {
+            console.log("👤 Usuário carregado:", userData.name);
             setUser(userData);
             setNewName(userData.name);
           } else {
+            console.warn("⚠️ Usuário não encontrado");
             handleLogout();
             return;
           }
 
+          // Carregar tipos de Pokémon
           const typesRes = await fetch("https://pokeapi.co/api/v2/type");
           if (!typesRes.ok) throw new Error("Erro ao carregar tipos.");
           const typesData = await typesRes.json();
@@ -320,7 +327,15 @@ export default function HomePage() {
           await loadInitialPokemons();
 
         } catch (error) {
-          console.error("Erro no carregamento inicial:", error);
+          console.error("💥 Erro no carregamento inicial:", error);
+          
+          // 👉 MELHOR TRATAMENTO DE ERRO
+          if (error.message.includes('Failed to fetch')) {
+            alert(`❌ Não foi possível conectar ao servidor.\n\nVerifique:\n• Sua conexão com a internet\n• Se o servidor está online\n\nURL: ${API_URL}`);
+          } else {
+            alert(`❌ Erro: ${error.message}`);
+          }
+          
           handleLogout();
         } finally {
           setLoading(false);
@@ -348,11 +363,14 @@ export default function HomePage() {
         className="flex justify-center items-center min-h-screen bg-cover bg-center bg-fixed"
         style={{ backgroundImage: "url('/fundoHome.jpg')" }}
       >
-        <img
-          src="/play.png"
-          alt="Carregando Pokédex..."
-          className="h-20 w-20 animate-spin"
-        />
+        <div className="text-center">
+          <img
+            src="/play.png"
+            alt="Carregando Pokédex..."
+            className="h-20 w-20 animate-spin mx-auto mb-4"
+          />
+          <p className="text-white text-lg">Carregando sua Pokédex...</p>
+        </div>
       </div>
     );
   }

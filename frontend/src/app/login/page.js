@@ -1,5 +1,3 @@
-//Autenticação Manual: implementei um login básico consumindo meu backend // Gerenciamento de sessão: uso localStorage para manter o estado de login entre páginas
-
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";

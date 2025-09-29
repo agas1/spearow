@@ -1,5 +1,3 @@
-//Esse hook conecta o usuário ao servidor de chat, escuta mensagens e usuários online, envia mensagens e mantém tudo sincronizado em tempo real
-
 import { useState, useEffect, useCallback } from "react";
 import { io } from "socket.io-client";
 import { CHAT_URL } from "../config";
