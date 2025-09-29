@@ -165,7 +165,6 @@ export default function FavoritesPage() {
                       </div>
                     )}
                     
-                    {/* 👉 MESMAS habilidades */}
                     <div className="w-full mt-2 p-2 text-center text-sm rounded-lg bg-black/40 border border-gray-700/50">
                       <span className="font-semibold text-gray-400 block mb-1">Habilidades:</span>
                       <span className="text-gray-200 capitalize">{abilities}</span>
