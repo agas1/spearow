@@ -1,0 +1,24 @@
+{
+  "name": "spearow-main",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix frontend\" \"npm run dev --prefix server\"",
+    "build": "npm run build --prefix frontend && npm run build --prefix server",
+    "start": "npm run start --prefix frontend & npm run start --prefix server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agas1/spearow.git"
+  },
+  "keywords": [],
+  "author": "Ágatha",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/agas1/spearow/issues"
+  },
+  "homepage": "https://github.com/agas1/spearow#readme",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
