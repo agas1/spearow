@@ -1,13 +1,13 @@
-# Dependencies
+# Dependências - NÃO commitar node_modules
 node_modules/
 frontend/node_modules/
 server/node_modules/
 
-# Production builds
+# Builds de produção
 frontend/.next/
 frontend/out/
 
-# Environment variables
+# Variáveis de ambiente
 .env
 .env.local
 
@@ -16,8 +16,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
