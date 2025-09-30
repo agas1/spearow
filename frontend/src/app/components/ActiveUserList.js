@@ -1,13 +1,12 @@
 "use client";
 import { User } from 'lucide-react';
-// Adapte o caminho se o useChat não estiver na pasta de hooks
 import useChat from '../hooks/useSocketChat';
 
 export default function ActiveUserList() {
-    // Usamos o hook para obter a lista de usuários ativos
+    // Obtém lista de usuários ativos e status da conexão
     const { activeUsers, isConnected } = useChat(); 
 
-    // Filtragem para evitar duplicidade e garantir que apenas usuários válidos apareçam
+    // Remove usuários duplicados da lista
     const uniqueUsers = activeUsers.reduce((acc, current) => {
         if (!acc.some(user => user.name === current.name)) {
             acc.push(current);
@@ -15,6 +14,7 @@ export default function ActiveUserList() {
         return acc;
     }, []);
 
+    // Mostra mensagem quando não há usuários online
     if (!isConnected || uniqueUsers.length === 0) {
         return (
             <div className="text-sm text-center text-gray-500 p-2">

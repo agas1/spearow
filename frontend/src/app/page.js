@@ -9,10 +9,12 @@ import PokemonResults from "./components/PokemonResults";
 import ChatWidget from "./components/ChatWidget";
 import Link from 'next/link';
 
-// 👉 importa as configs (urls centralizadas)
+// Eu centralizei as URLs da API aqui para facilitar a manutenção
+// Se precisar mudar o backend, é só atualizar este arquivo
 import { API_URL } from "./config";
 
-// 👉 MESMO mapeamento de cores do PokemonResults
+// Criei este mapeamento de cores para cada tipo de Pokémon
+// Foi um trabalho manual do caramba :,(
 const typeColors = {
   fire: 'bg-red-600 shadow-red-600/50',
   water: 'bg-blue-600 shadow-blue-600/50',
@@ -34,11 +36,13 @@ const typeColors = {
   fighting: 'bg-orange-700 shadow-orange-700/50'
 };
 
-// 👉 MESMA função auxiliar do PokemonResults
+
 const getTypeClass = (type) => typeColors[type] || 'bg-gray-700 shadow-gray-700/50';
 
-// 👉 Componente PokemonGrid ATUALIZADO com mesmo layout do PokemonResults
+// Criei este componente para exibir os Pokémon em grid
+// Reutilizei o mesmo layout do PokemonResults para manter consistência
 function PokemonGrid({ pokemons, isPokemonFavorited, addFavorite }) {
+  // Se não há pokémons para mostrar, retorno null para não quebrar a UI
   if (!pokemons || pokemons.length === 0) {
     return null;
   }
@@ -47,7 +51,9 @@ function PokemonGrid({ pokemons, isPokemonFavorited, addFavorite }) {
     <div className="w-full max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 px-4">
       {pokemons.map((poke) => {
         const favorited = isPokemonFavorited(poke.name);
+        // Tento pegar a imagem oficial primeiro, se não tiver uso a default
         const imageUrl = poke.sprites?.other['official-artwork']?.front_default || poke.sprites?.front_default || "/default-pokemon.png";
+        // Limito a 2 habilidades para não poluir visualmente
         const abilities = poke.abilities?.slice(0, 2).map(a => a.ability.name).join(', ') || 'N/A';
 
         return (
@@ -106,28 +112,29 @@ function PokemonGrid({ pokemons, isPokemonFavorited, addFavorite }) {
 export default function HomePage() {
   const router = useRouter();
 
-  // --- Estados principais ---
+  // --- Estados principais que controlam a página ---
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
 
-  // 👉 Novos estados para pokémons em destaque
+  // Adicionei estes estados para organizar melhor os Pokémon
+  // Os em destaque são os clássicos que todo mundo conhece
   const [featuredPokemons, setFeaturedPokemons] = useState([]);
   const [allPokemons, setAllPokemons] = useState([]);
   const [showAllPokemons, setShowAllPokemons] = useState(false);
 
-  // --- Estados do perfil ---
+  // --- Estados para edição do perfil ---
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState(""); 
   const [newPassword, setNewPassword] = useState("");
 
-  // --- Busca por tipo ---
+  // --- Estados para busca por tipo ---
   const [pokemonTypes, setPokemonTypes] = useState([]);
   const [selectedType, setSelectedType] = useState("");
 
-  // --- Favoritos ---
+  // --- Sistema de favoritos ---
   const [userEmail, setUserEmail] = useState(null);
   const { addFavorite, favorites, loading: favoritesLoading } =
     useFavorites(userEmail);
@@ -135,8 +142,9 @@ export default function HomePage() {
   const isPokemonFavorited = (pokemonName) =>
     favorites.some((fav) => fav.name === pokemonName);
 
-  // --- Funções ---
+  // --- Funções principais ---
   const handleLogout = useCallback(() => {
+    // Limpo tudo do localStorage e redireciono para login
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("userEmail");
     setIsLoggedIn(false);
@@ -145,16 +153,19 @@ export default function HomePage() {
     router.push("/login");
   }, [router]);
 
+  // Esta função busca detalhes de um Pokémon específico
+  // Uso quando preciso de informações completas além do básico
   const fetchPokemonDetails = async (url) => {
     const res = await fetch(url);
     if (!res.ok) throw new Error("Erro ao buscar detalhes do Pokémon.");
     return res.json();
   };
 
-  // 👉 Nova função para carregar pokémons iniciais
+  // Criei esta função para carregar alguns Pokémon logo ao entrar
+  // Escolhi os mais icônicos para chamar atenção dos usuários
   const loadInitialPokemons = async () => {
     try {
-      // Pokémon em destaque (clássicos)
+      // Estes são os Pokémon que todo fã conhece
       const featuredIds = [6, 25, 150, 94, 143, 149];
       const featuredPromises = featuredIds.map(id => 
         fetch(`https://pokeapi.co/api/v2/pokemon/${id}`).then(res => res.json())
@@ -163,7 +174,7 @@ export default function HomePage() {
       const featuredData = await Promise.all(featuredPromises);
       setFeaturedPokemons(featuredData);
 
-      // Primeiros 12 pokémons para lista completa
+      // Carrego os primeiros 12 para a lista completa
       const listRes = await fetch("https://pokeapi.co/api/v2/pokemon?limit=12");
       const listData = await listRes.json();
       
@@ -225,7 +236,8 @@ export default function HomePage() {
     }
   };
 
-  // 👉 Função para carregar mais pokémons
+  // Esta função permite carregar mais Pokémon quando o usuário quiser
+  // Uso o offset baseado no tamanho atual da lista
   const loadMorePokemons = async () => {
     try {
       const nextRes = await fetch(`https://pokeapi.co/api/v2/pokemon?offset=${allPokemons.length}&limit=12`);
@@ -242,7 +254,8 @@ export default function HomePage() {
     }
   };
 
-  // 👉 FUNÇÃO CORRIGIDA: Usar endpoint /profile da SUA API
+  // Esta função atualiza o perfil do usuário
+  // Tive que corrigir para usar o endpoint correto da minha API
   const handleUpdate = async (e) => {
     e.preventDefault();
     const userEmail = user?.email;
@@ -257,6 +270,7 @@ export default function HomePage() {
         newName: newName 
       };
       
+      // Só atualizo a senha se o usuário preencheu o campo
       if (newPassword.trim()) {
         updateData.newPassword = newPassword;
       }
@@ -271,7 +285,7 @@ export default function HomePage() {
         const data = await res.json();
         alert("Perfil atualizado com sucesso!");
         setIsEditing(false);
-        setUser(data.user); // ← SUA API retorna { message: "...", user: {...} }
+        setUser(data.user);
         setNewPassword("");
       } else {
         const errorData = await res.json();
@@ -283,7 +297,7 @@ export default function HomePage() {
     }
   };
 
-  // --- Efeitos ---
+  // --- Efeitos que rodam automaticamente ---
   useEffect(() => {
     const email = localStorage.getItem("userEmail");
     const loggedInStatus = localStorage.getItem("isLoggedIn") === "true";
@@ -294,18 +308,15 @@ export default function HomePage() {
         setUserEmail(email);
 
         try {
-          // 👉 CORREÇÃO: Usar endpoint /users da SUA API
-          console.log("🔍 Buscando usuário com email:", email);
-console.log("🌐 URL sendo usada:", `${API_URL}/users?email=${encodeURIComponent(email)}`);
-
-const userRes = await fetch(`${API_URL}/users?email=${encodeURIComponent(email)}`);
-console.log("📡 Status da resposta:", userRes.status);
+          // Busco os dados do usuário da minha API
+          // Uso encodeURIComponent para lidar com emails com caracteres especiais
+          const userRes = await fetch(`${API_URL}/users?email=${encodeURIComponent(email)}`);
           
           if (!userRes.ok) {
             throw new Error(`Erro ao carregar dados do usuário: ${userRes.status}`);
           }
 
-          // 👉 CORREÇÃO: Sua API retorna objeto direto, não array
+          // Minha API retorna um objeto direto, não array
           const userData = await userRes.json();
 
           if (userData && userData.email) {
@@ -317,22 +328,22 @@ console.log("📡 Status da resposta:", userRes.status);
             return;
           }
 
-          // Carregar tipos de Pokémon
+          // Carrego todos os tipos de Pokémon disponíveis
           const typesRes = await fetch("https://pokeapi.co/api/v2/type");
           if (!typesRes.ok) throw new Error("Erro ao carregar tipos.");
           const typesData = await typesRes.json();
           setPokemonTypes(typesData.results);
 
-          // 👉 Carrega pokémons iniciais após login
+          // Só carrego os Pokémon depois que tenho o usuário
           await loadInitialPokemons();
 
         } catch (error) {
           console.error("Erro no carregamento inicial:", error);
           
           if (error.message.includes('Failed to fetch')) {
-            alert(`❌ Não foi possível conectar ao servidor.\n\nVerifique:\n• Se o backend está rodando na porta 4000\n• URL: ${API_URL}`);
+            alert(`Não foi possível conectar ao servidor.\n\nVerifique:\n• Se o backend está rodando\n• URL: ${API_URL}`);
           } else {
-            alert(`❌ Erro: ${error.message}`);
+            alert(`Erro: ${error.message}`);
           }
           
           handleLogout();
@@ -355,7 +366,7 @@ console.log("📡 Status da resposta:", userRes.status);
     }
   }, [selectedType, handleSearchByType]);
 
-  // --- Render ---
+  // --- Renderização da página ---
   if (loading || favoritesLoading) {
     return (
       <div 
@@ -402,7 +413,8 @@ console.log("📡 Status da resposta:", userRes.status);
             setSelectedType={setSelectedType}
           />
 
-          {/* 👉 Seção de Destaques - aparece apenas quando não há busca */}
+          {/* Mostro os destaques apenas quando não há busca ativa */}
+          {/* Isso evita poluição visual para o usuário */}
           {results.length === 0 && !selectedType && (
             <>
               <section className="mb-12">
@@ -414,7 +426,7 @@ console.log("📡 Status da resposta:", userRes.status);
                 />
               </section>
 
-              {/* 👉 Seção de Todos os Pokémons */}
+              {/* Esta seção é opcional - o usuário decide se quer ver todos */}
               <section>
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-2xl font-bold text-white"> Todos os Pokémons</h2>
@@ -447,7 +459,7 @@ console.log("📡 Status da resposta:", userRes.status);
             </>
           )}
 
-          {/* 👉 Resultados da Busca (mantido) */}
+          {/* Mostro os resultados da busca aqui */}
           <PokemonResults
             results={results}
             isPokemonFavorited={isPokemonFavorited}

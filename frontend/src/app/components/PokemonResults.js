@@ -14,22 +14,12 @@ const typeColors = {
   // Adicione outros tipos conforme necessário
 };
 
-// Função auxiliar para obter a cor do tipo
+// 
 const getTypeClass = (type) => typeColors[type] || 'bg-gray-700 shadow-gray-700/50';
 
 export default function PokemonResults({ results, isPokemonFavorited, addFavorite }) {
 
-  // REMOVA ou COMENTE esta parte para não mostrar mensagem quando não há resultados
-  // if (results.length === 0) {
-  //   return (
-  //     <div 
-  //       // Estilo Neon para mensagem de erro/vazio
-  //       className="mt-12 text-center text-gray-400 p-6 rounded-lg border border-neonPurple/30 bg-darkBackground/70 shadow-lg"
-  //     >
-  //       Nenhum Pokémon encontrado. Tente outra busca por nome ou selecione um tipo.
-  //     </div>
-  //   );
-  // }
+
 
   // Se não há resultados, retorna nada (vazio)
   if (results.length === 0) {
@@ -37,20 +27,20 @@ export default function PokemonResults({ results, isPokemonFavorited, addFavorit
   }
 
   return (
-    // Colunas ajustadas para o layout centralizado da imagem
+    // 
     <div className="mt-8 w-full max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 px-4">
       {results.map((poke) => {
         const favorited = isPokemonFavorited(poke.name);
-        // Usando a arte oficial de alta qualidade para um visual melhor
+        // 
         const imageUrl = poke.sprites?.other['official-artwork']?.front_default || poke.sprites?.front_default || "/default-pokemon.png";
         
-        // Pega as duas primeiras habilidades (usadas na imagem)
+        // 
         const abilities = poke.abilities?.slice(0, 2).map(a => a.ability.name).join(', ') || 'N/A';
 
         return (
           <div
             key={poke.id}
-            // Classe principal do Card: Fundo de vidro + Sombra de transição
+           
             className="relative card-background rounded-2xl p-4 flex flex-col items-center 
                        transform hover:scale-[1.03] transition-transform duration-300 shadow-2xl border-2 border-neonBlue/20"
           >

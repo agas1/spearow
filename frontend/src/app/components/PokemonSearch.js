@@ -107,7 +107,7 @@ export default function PokemonSearch({ query, setQuery, handleSearch, pokemonTy
         </div>
       </div>
 
-      {/* Dropdown escondido (mantido para referência) */}
+      {/* Dropdown escondido hehe */}
       <div className="hidden">
         <select
           value={selectedType}

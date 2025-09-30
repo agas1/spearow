@@ -1,11 +1,10 @@
 "use client";
-// Importamos o useEffect e useState para pegar o email, mas o ideal é receber via prop
+
 import useFavorites from "../hooks/useFavorites";
 
-// AGORA RECEBE O userEmail COMO PROP
+// Componente para exibir card de Pokémon com opção de favoritar
 export default function PokemonCard({ pokemon, userEmail }) { 
-  // O hook agora recebe o email para saber onde salvar!
-  // Se userEmail for null/undefined, o hook não fará nada.
+  // Hook recebe o email para identificar qual usuário está favoritando
   const { addFavorite } = useFavorites(userEmail); 
 
   return (

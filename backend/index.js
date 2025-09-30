@@ -1,15 +1,15 @@
-const express = require("express"); // cria servidor
-const http = require("http"); // servidor básico do Node
-const { Server } = require("socket.io"); // chat em tempo real
-const cors = require("cors"); // libera acesso pra outros sites
+const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
+const cors = require("cors");
 
 const app = express();
 
-// CORS pra aceitar só meus domínios e local
+// Domínios permitidos para acessar a API
 const allowedOrigins = [
-  "https://spearow-2bi1-git-main-agas1s-projects.vercel.app", // preview
-  "https://spearow-2bi1.vercel.app", // produção
-  "http://localhost:3000" // local
+  "https://spearow-2bi1-git-main-agas1s-projects.vercel.app",
+  "https://spearow-2bi1.vercel.app", 
+  "http://localhost:3000"
 ];
 
 app.use(cors({
@@ -18,61 +18,79 @@ app.use(cors({
   credentials: true
 }));
 
-app.use(express.json()); // lê JSON vindo do frontend
+// Middleware para processar JSON das requisições
+app.use(express.json());
 
-const users = []; // "banco"
+// Array em memória para armazenar usuários (simula banco de dados)
+const users = [];
 
-// criar conta
+// Criar nova conta de usuário
 app.post("/register", (req, res) => {
   const { name, email, password } = req.body;
+  
+  // Verifica se email já está cadastrado
   if (users.find((u) => u.email === email)) {
     return res.status(400).json({ error: "Usuário já existe" });
   }
+  
+  // Adiciona novo usuário com lista de favoritos vazia
   users.push({ name, email, password, favorites: [] });
   return res.status(201).json({ message: "Usuário criado" });
 });
 
-// login
+// Autenticar usuário
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
   const user = users.find((u) => u.email === email && u.password === password);
-  if (user) return res.json({ message: "Login OK", user });
+  
+  if (user) {
+    return res.json({ message: "Login OK", user });
+  }
+  
   return res.status(401).json({ error: "Email ou senha errados" });
 });
 
-// pegar perfil pelo email
+// Buscar usuário por email
 app.get("/users", (req, res) => {
   const userEmail = req.query.email;
   const user = users.find((u) => u.email === userEmail);
+  
   if (user) {
+    // Remove senha por segurança antes de retornar
     const copy = { ...user };
     delete copy.password;
     return res.json(copy);
   }
+  
   return res.status(404).json({ error: "Usuário não encontrado" });
 });
 
-// atualizar perfil
+// Atualizar dados do usuário
 app.patch("/profile", (req, res) => {
   const { email, newName, newPassword, newFavorites } = req.body;
   const user = users.find((u) => u.email === email);
+  
   if (user) {
+    // Atualiza apenas os campos fornecidos
     if (newName) user.name = newName;
     if (newPassword) user.password = newPassword;
     if (newFavorites) user.favorites = newFavorites;
+    
+    // Retorna usuário atualizado sem a senha
     const copy = { ...user };
     delete copy.password;
     return res.json({ message: "Perfil atualizado", user: copy });
   }
+  
   return res.status(404).json({ error: "Usuário não encontrado" });
 });
 
-// rota simples pra testar
+// Rota de health check
 app.get("/", (req, res) => {
   res.send("Backend funcionando");
 });
 
-// CHAAAT
+// Configuração do WebSocket para chat em tempo real
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -81,19 +99,24 @@ const io = new Server(server, {
   }
 });
 
-const onlineUsers = {}; // quem tá on
+// Controla usuários online no chat
+const onlineUsers = {};
 
+// Eventos do WebSocket
 io.on("connection", (socket) => {
   const userName = socket.handshake.query.userName || "Anônimo";
   onlineUsers[socket.id] = userName;
   console.log(`${userName} conectado`);
 
-  io.emit("user_connected", Object.values(onlineUsers)); // avisa todo mundo
+  // Notifica todos sobre usuários online
+  io.emit("user_connected", Object.values(onlineUsers));
 
+  // Recebe e retransmite mensagens
   socket.on("send_message", (data) => {
-    io.emit("receive_message", data); // envia mensagem pra todos
+    io.emit("receive_message", data);
   });
 
+  // Remove usuário ao desconectar
   socket.on("disconnect", () => {
     console.log(`${userName} saiu`);
     delete onlineUsers[socket.id];
@@ -101,8 +124,8 @@ io.on("connection", (socket) => {
   });
 });
 
-// liga servidor
+// Inicia servidor
 const PORT = process.env.PORT || 4000;
 server.listen(PORT, () =>
-  console.log(`Servidor rodando na porta ${PORT} `)
+  console.log(`Servidor rodando na porta ${PORT}`)
 );

@@ -44,7 +44,6 @@ export default function FavoritesPage() {
     setUserEmail(email);
   }, [router]);
   
- 
   const { favorites, removeFavorite, loading } = useFavorites(userEmail);
 
   useEffect(() => {
@@ -93,15 +92,21 @@ export default function FavoritesPage() {
       style={{ backgroundImage: "url('/fundoHome.jpg')" }}
     >
       <div className="container mx-auto">
-        {/* Header */}
+        {/* Header - Posições invertidas */}
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-bold text-white">⭐ Pokémons Favoritos</h2>
+          {/* Botão Voltar na esquerda */}
           <Link 
             href="/"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-all duration-200 transform hover:scale-105"
+            className="flex items-center space-x-2 bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-all duration-200 border border-gray-600"
           >
-            Voltar para Home
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            <span>Voltar para Home</span>
           </Link>
+
+          {/* Título na direita */}
+          <h2 className="text-3xl font-bold text-white">⭐ Pokémons Favoritos</h2>
         </div>
 
         {favorites.length === 0 ? (
@@ -123,16 +128,17 @@ export default function FavoritesPage() {
 
               return (
                 <div
-                  key={`${pokemon.name}-${pokemon.id || Date.now()}-${Math.random()}`} // 🔑 KEY ÚNICA CORRIGIDA
+                  key={`${pokemon.name}-${pokemon.id || Date.now()}-${Math.random()}`}
                   className="relative card-background rounded-2xl p-4 flex flex-col items-center transform hover:scale-[1.03] transition-transform duration-300 shadow-2xl border-2 border-neonBlue/20"
                 >
-                  {/* Botão de Remover (no mesmo lugar do favorito) */}
+                  {/* Botão de Remover discreto no canto */}
                   <button
                     onClick={() => removeFavorite(pokemon.name)}
-                    className="absolute top-3 right-3 text-xl transition-transform duration-200 hover:scale-125 z-10 text-red-500 hover:text-red-400"
+                    className="absolute top-3 right-3 w-7 h-7 flex items-center justify-center bg-red-600 hover:bg-red-700 rounded-full transition-all duration-200 hover:scale-110 z-10"
                     aria-label="Remover dos favoritos"
+                    title="Remover dos favoritos"
                   >
-                    ❌
+                    <span className="text-white text-sm font-bold">×</span>
                   </button>
                   
                   <Link href={`/pokemon/${pokemon.name}`} className="w-full flex flex-col items-center group">
@@ -149,14 +155,13 @@ export default function FavoritesPage() {
                       {pokemon.name}
                     </h2>
                     
-                  
                     {details?.types && (
                       <div className="flex space-x-2 justify-center mb-3">
                         {details.types.map((typeInfo) => (
                           <span
-                            key={typeInfo.type.name} // 🔑 Key para os tipos também
+                            key={typeInfo.type.name}
                             className={`px-3 py-1 rounded-full text-xs font-semibold capitalize text-white shadow-md ${
-                                getTypeClass(typeInfo.type.name)
+                              getTypeClass(typeInfo.type.name)
                             }`}
                           >
                             {typeInfo.type.name}
@@ -170,14 +175,6 @@ export default function FavoritesPage() {
                       <span className="text-gray-200 capitalize">{abilities}</span>
                     </div>
                   </Link>
-
-                  {/* Botão Remover adicional (opcional) */}
-                  <button
-                    onClick={() => removeFavorite(pokemon.name)}
-                    className="w-full mt-4 bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg transition-colors duration-200 font-semibold"
-                  >
-                    Remover dos Favoritos
-                  </button>
                 </div>
               );
             })}

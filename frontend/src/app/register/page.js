@@ -45,12 +45,11 @@ export default function RegisterPage() {
       style={{ backgroundImage: "url('/fundoHome.jpg')" }}
     >
       <div className="w-full max-w-md">
-        {/* Card de Registro com mesmo estilo do login */}
+        
         <div className="relative card-background rounded-2xl p-8 flex flex-col items-center shadow-2xl border-2 border-neonBlue/20 transform hover:scale-[1.02] transition-transform duration-300">
           
-          {/* Logo Spearow + Pokébola - MESMA DO LOGIN */}
           <div className="flex flex-col items-center gap-0 mb-8">
-            {/* Logo Spearow acima */}
+            {/* Logo */}
             <Image 
               src="/apearow.png" 
               alt="Spearow Logo" 
@@ -58,7 +57,7 @@ export default function RegisterPage() {
               height={50}
               className="object-contain"
             />
-            {/* Pokébola abaixo */}
+            {/* Pokébola  */}
             <Image 
               src="/pokeball.png" 
               alt="Pokébola" 

@@ -29,7 +29,7 @@ export default function Navbar({ user, handleUpdate, handleLogout, isEditing, se
 
   return (
     <>
-      <nav className="bg-black/80 backdrop-blur-md border-b border-neonBlue/30 shadow-2xl relative z-40">
+      <nav className="bg-gray-900 border-b border-gray-700 shadow-lg relative z-40">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
@@ -73,7 +73,7 @@ export default function Navbar({ user, handleUpdate, handleLogout, isEditing, se
                 <div className="relative">
                   <button
                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-white/10 transition-all duration-200 border border-transparent hover:border-neonBlue/30"
+                    className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-800 transition-all duration-200 border border-transparent hover:border-gray-600"
                   >
                     <div className="w-10 h-10 flex items-center justify-center">
                       <Image 
@@ -91,8 +91,8 @@ export default function Navbar({ user, handleUpdate, handleLogout, isEditing, se
                   </button>
 
                   {isUserMenuOpen && (
-                    <div className="absolute right-0 mt-2 w-72 bg-black/95 backdrop-blur-lg rounded-xl shadow-2xl border-2 border-neonBlue/20 z-50">
-                      <div className="p-4 border-b border-gray-700/50">
+                    <div className="absolute right-0 mt-2 w-72 bg-gray-800 rounded-lg shadow-xl border border-gray-600 z-50">
+                      <div className="p-4 border-b border-gray-700">
                         <div className="flex items-center space-x-3">
                           <div className="w-12 h-12 flex items-center justify-center">
                             <Image 
@@ -113,7 +113,7 @@ export default function Navbar({ user, handleUpdate, handleLogout, isEditing, se
                       <div className="p-2">
                         <button
                           onClick={handleEditClick}
-                          className="w-full flex items-center space-x-3 px-4 py-3 text-white hover:bg-white/10 rounded-lg transition-all duration-200"
+                          className="w-full flex items-center space-x-3 px-4 py-3 text-white hover:bg-gray-700 rounded-lg transition-all duration-200"
                         >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -162,13 +162,13 @@ export default function Navbar({ user, handleUpdate, handleLogout, isEditing, se
             onClick={handleModalClose}
           ></div>
           
-          <div className="card-background rounded-2xl shadow-2xl w-full max-w-md relative z-[70] border-2 border-neonBlue/20 transform transition-transform duration-300">
+          <div className="bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md relative z-[70] border border-gray-600 transform transition-transform duration-300">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-2xl font-bold text-white">Editar Perfil</h3>
                 <button
                   onClick={handleModalClose}
-                  className="text-gray-400 hover:text-white transition-colors p-2 rounded-lg hover:bg-white/10"
+                  className="text-gray-400 hover:text-white transition-colors p-2 rounded-lg hover:bg-gray-700"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -183,7 +183,7 @@ export default function Navbar({ user, handleUpdate, handleLogout, isEditing, se
                     type="text"
                     value={newName}
                     onChange={(e) => setNewName(e.target.value)}
-                    className="w-full px-4 py-3 bg-black/40 border border-gray-700/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-neonBlue focus:border-neonBlue transition-all duration-200"
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                     required
                   />
                 </div>
@@ -195,7 +195,7 @@ export default function Navbar({ user, handleUpdate, handleLogout, isEditing, se
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Deixe em branco para manter a senha atual"
-                    className="w-full px-4 py-3 bg-black/40 border border-gray-700/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-neonBlue focus:border-neonBlue transition-all duration-200"
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                   />
                   <p className="text-xs text-gray-400 mt-2">Mínimo 6 caracteres (opcional)</p>
                 </div>
@@ -203,14 +203,14 @@ export default function Navbar({ user, handleUpdate, handleLogout, isEditing, se
                 <div className="flex space-x-3 pt-2">
                   <button
                     type="submit"
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg transition-all duration-200 font-semibold border-2 border-blue-500/30"
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg transition-all duration-200 font-semibold border border-blue-500"
                   >
                     Salvar Alterações
                   </button>
                   <button
                     type="button"
                     onClick={handleModalClose}
-                    className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-3 rounded-lg transition-all duration-200 font-semibold border-2 border-gray-500/30"
+                    className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-3 rounded-lg transition-all duration-200 font-semibold border border-gray-500"
                   >
                     Cancelar
                   </button>
@@ -231,10 +231,10 @@ function NavLink({ href, currentPath, children }) {
   return (
     <Link 
       href={href}
-      className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 border-2 ${
+      className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 border ${
         isActive 
-          ? 'bg-blue-600 text-white border-blue-500/50 shadow-lg shadow-blue-600/20' 
-          : 'text-gray-300 hover:text-white hover:bg-white/10 border-transparent hover:border-neonBlue/30'
+          ? 'bg-blue-600 text-white border-blue-500 shadow-lg shadow-blue-600/20' 
+          : 'text-gray-300 hover:text-white hover:bg-gray-800 border-transparent hover:border-gray-600'
       }`}
     >
       {children}
@@ -250,7 +250,7 @@ function MobileMenu({ pathname, user, handleLogout, onEditClick }) {
     <>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 rounded-lg text-white hover:bg-white/10 transition-all duration-200 border border-transparent hover:border-neonBlue/30"
+        className="p-2 rounded-lg text-white hover:bg-gray-800 transition-all duration-200 border border-transparent hover:border-gray-600"
       >
         <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -258,7 +258,7 @@ function MobileMenu({ pathname, user, handleLogout, onEditClick }) {
       </button>
 
       {isOpen && (
-        <div className="absolute top-20 left-0 right-0 bg-black/95 backdrop-blur-lg border-b border-neonBlue/30 shadow-2xl z-50">
+        <div className="absolute top-20 left-0 right-0 bg-gray-800 border-b border-gray-600 shadow-xl z-50">
           <div className="px-4 py-4 space-y-2">
             <MobileNavLink href="/favorites" currentPath={pathname} onClick={() => setIsOpen(false)}>
               ⭐ Favoritos
@@ -272,7 +272,7 @@ function MobileMenu({ pathname, user, handleLogout, onEditClick }) {
             
             {user ? (
               <>
-                <div className="px-3 py-3 text-white border-t border-gray-700/50 mt-2 pt-3">
+                <div className="px-3 py-3 text-white border-t border-gray-700 mt-2 pt-3">
                   <div className="text-sm text-gray-300">Logado como:</div>
                   <div className="font-semibold">{user.name}</div>
                 </div>
@@ -281,7 +281,7 @@ function MobileMenu({ pathname, user, handleLogout, onEditClick }) {
                     onEditClick();
                     setIsOpen(false);
                   }}
-                  className="w-full text-left px-3 py-3 rounded-lg text-white hover:bg-white/10 transition-all duration-200"
+                  className="w-full text-left px-3 py-3 rounded-lg text-white hover:bg-gray-700 transition-all duration-200"
                 >
                   ✏️ Editar Perfil
                 </button>
@@ -318,7 +318,7 @@ function MobileNavLink({ href, currentPath, children, onClick }) {
       className={`block px-3 py-3 rounded-lg font-medium transition-all duration-200 ${
         isActive 
           ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' 
-          : 'text-gray-300 hover:text-white hover:bg-white/10'
+          : 'text-gray-300 hover:text-white hover:bg-gray-700'
       }`}
     >
       {children}
