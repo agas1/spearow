@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { API_URL } from "../config"; // 
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -16,7 +17,8 @@ export default function RegisterPage() {
     setLoading(true);
     
     try {
-      const res = await fetch("http://localhost:4000/register", {
+      
+      const res = await fetch(`${API_URL}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password }),

@@ -295,7 +295,11 @@ export default function HomePage() {
 
         try {
           // 👉 CORREÇÃO: Usar endpoint /users da SUA API
-          const userRes = await fetch(`${API_URL}/users?email=${encodeURIComponent(email)}`);
+          console.log("🔍 Buscando usuário com email:", email);
+console.log("🌐 URL sendo usada:", `${API_URL}/users?email=${encodeURIComponent(email)}`);
+
+const userRes = await fetch(`${API_URL}/users?email=${encodeURIComponent(email)}`);
+console.log("📡 Status da resposta:", userRes.status);
           
           if (!userRes.ok) {
             throw new Error(`Erro ao carregar dados do usuário: ${userRes.status}`);

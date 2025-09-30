@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { API_URL } from "../config"; // 
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -15,7 +16,8 @@ export default function LoginPage() {
     setLoading(true);
     
     try {
-      const res = await fetch("http://localhost:4000/login", {
+      // 👇 URL CORRIGIDA - usando API_URL do Render
+      const res = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
