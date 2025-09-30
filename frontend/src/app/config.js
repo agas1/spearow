@@ -1,5 +1,4 @@
-
-const API_URL = "http://localhost:4000";
-const CHAT_URL = process.env.NEXT_PUBLIC_CHAT_URL || "https://spearow-websocket.onrender.com";
+const API_URL = "https://spearow-backend.onrender.com";
+const CHAT_URL = "https://spearow-backend.onrender.com";
 
 export { API_URL, CHAT_URL };
