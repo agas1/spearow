@@ -1,19 +1,23 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { io } from "socket.io-client";
 import { CHAT_URL } from "../config";
-
-let socket;
 
 export default function useChat(userName) {
   const [messages, setMessages] = useState([]);
   const [isConnected, setIsConnected] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState([]);
+  
+  const socketRef = useRef(null);
 
   useEffect(() => {
-    if (!userName) return; // Não conecta se não houver nome
-    if (socket) return;
+    if (!userName) return;
 
-    socket = io(CHAT_URL, { query: { userName } });
+    if (socketRef.current) {
+      return;
+    }
+
+    socketRef.current = io(CHAT_URL, { query: { userName } });
+    const socket = socketRef.current;
 
     socket.on("connect", () => {
       setIsConnected(true);
@@ -32,24 +36,22 @@ export default function useChat(userName) {
     });
 
     return () => {
-      if (socket) {
-        socket.off();
-        socket.close();
-        socket = null;
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
       }
     };
   }, [userName]);
 
   const sendMessage = useCallback(
     (content) => {
-      if (socket && isConnected && content.trim()) {
+      if (socketRef.current && isConnected && content.trim()) {
         const message = {
           sender: userName,
-          content,
+          content: content.trim(),
           timestamp: new Date().toLocaleTimeString(),
         };
-        socket.emit("send_message", message);
-        setMessages((prev) => [...prev, message]);
+        socketRef.current.emit("send_message", message);
       }
     },
     [isConnected, userName]
